@@ -89,14 +89,32 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Camera example'),
+        title: Text('BeeS'),
+        flexibleSpace: Image.asset(
+          "images/banner.jpeg",
+          fit: BoxFit.fill,
+        ),
+        // TODO: Banner's background color should be included into the material design palette
+        backgroundColor: Colors.deepPurple[900],
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                _cameraTogglesRowWidget(),
+                //_thumbnailWidget(),
+              ],
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
           Expanded(
             child: Container(
               child: Padding(
-                padding: const EdgeInsets.all(1.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Center(
                   child: _cameraPreviewWidget(),
                 ),
@@ -106,25 +124,26 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 border: Border.all(
                   color: controller != null && controller.value.isRecordingVideo
                       ? controller.value.isStreamingVideoRtmp
-                      ? Colors.redAccent
-                      : Colors.orangeAccent
+                          ? Colors.redAccent
+                          : Colors.orangeAccent
                       : controller != null &&
-                      controller.value.isStreamingVideoRtmp
-                      ? Colors.blueAccent
-                      : Colors.grey,
+                              controller.value.isStreamingVideoRtmp
+                          ? Colors.deepPurple
+                          : Colors.grey,
                   width: 3.0,
                 ),
               ),
             ),
           ),
-          _captureControlRowWidget(),
-          _toggleAudioWidget(),
+          //_captureControlRowWidget(),
+          //_toggleAudioWidget(),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _cameraTogglesRowWidget(),
+                //_cameraTogglesRowWidget(),
+                _toggleAudioWidget(),
                 _thumbnailWidget(),
               ],
             ),
@@ -185,23 +204,23 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             videoController == null && imagePath == null
                 ? Container()
                 : SizedBox(
-              child: (videoController == null)
-                  ? Image.file(File(imagePath))
-                  : Container(
-                child: Center(
-                  child: AspectRatio(
-                      aspectRatio:
-                      videoController.value.size != null
-                          ? videoController.value.aspectRatio
-                          : 1.0,
-                      child: VideoPlayer(videoController)),
-                ),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.pink)),
-              ),
-              width: 64.0,
-              height: 64.0,
-            ),
+                    child: (videoController == null)
+                        ? Image.file(File(imagePath))
+                        : Container(
+                            child: Center(
+                              child: AspectRatio(
+                                  aspectRatio:
+                                      videoController.value.size != null
+                                          ? videoController.value.aspectRatio
+                                          : 1.0,
+                                  child: VideoPlayer(videoController)),
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.pink)),
+                          ),
+                    width: 64.0,
+                    height: 64.0,
+                  ),
           ],
         ),
       ),
@@ -214,19 +233,19 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        IconButton(
+/*        IconButton(
           icon: const Icon(Icons.camera_alt),
           color: Colors.blue,
           onPressed: controller != null && controller.value.isInitialized
               ? onTakePictureButtonPressed
               : null,
-        ),
+        ),*/
         IconButton(
           icon: const Icon(Icons.videocam),
           color: Colors.blue,
           onPressed: controller != null &&
-              controller.value.isInitialized &&
-              !controller.value.isRecordingVideo
+                  controller.value.isInitialized &&
+                  !controller.value.isRecordingVideo
               ? onVideoRecordButtonPressed
               : null,
         ),
@@ -234,34 +253,36 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           icon: const Icon(Icons.watch),
           color: Colors.blue,
           onPressed: controller != null &&
-              controller.value.isInitialized &&
-              !controller.value.isStreamingVideoRtmp
+                  controller.value.isInitialized &&
+                  !controller.value.isStreamingVideoRtmp
               ? onVideoStreamingButtonPressed
               : null,
         ),
         IconButton(
-          icon: controller != null && (controller.value.isRecordingPaused || controller.value.isStreamingPaused)
+          icon: controller != null &&
+                  (controller.value.isRecordingPaused ||
+                      controller.value.isStreamingPaused)
               ? Icon(Icons.play_arrow)
               : Icon(Icons.pause),
           color: Colors.blue,
           onPressed: controller != null &&
-              controller.value.isInitialized &&
-              (controller.value.isRecordingVideo ||
-                  controller.value.isStreamingVideoRtmp)
+                  controller.value.isInitialized &&
+                  (controller.value.isRecordingVideo ||
+                      controller.value.isStreamingVideoRtmp)
               ? (controller != null &&
-              (controller.value.isRecordingPaused ||
-                  controller.value.isStreamingPaused)
-              ? onResumeButtonPressed
-              : onPauseButtonPressed)
+                      (controller.value.isRecordingPaused ||
+                          controller.value.isStreamingPaused)
+                  ? onResumeButtonPressed
+                  : onPauseButtonPressed)
               : null,
         ),
         IconButton(
           icon: const Icon(Icons.stop),
           color: Colors.red,
           onPressed: controller != null &&
-              controller.value.isInitialized &&
-              (controller.value.isRecordingVideo ||
-                  controller.value.isStreamingVideoRtmp)
+                  controller.value.isInitialized &&
+                  (controller.value.isRecordingVideo ||
+                      controller.value.isStreamingVideoRtmp)
               ? onStopButtonPressed
               : null,
         )
@@ -639,7 +660,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Future<void> _startVideoPlayer() async {
     final VideoPlayerController vcontroller =
-    VideoPlayerController.file(File(videoPath));
+        VideoPlayerController.file(File(videoPath));
     videoPlayerListener = () {
       if (videoController != null && videoController.value.size != null) {
         // Refreshing the state to update video player with the correct ratio.
@@ -694,6 +715,7 @@ class CameraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: CameraExampleHome(),
     );
   }
